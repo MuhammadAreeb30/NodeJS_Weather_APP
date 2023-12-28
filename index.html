@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+        integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: #f3f2ef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        html,
+        body {
+            font-size: 62.5%;
+            height: 100vh;
+        }
+
+        html {
+            background: #eee;
+        }
+
+        .box {
+            width: 20vw;
+            height: 60vh;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.2rem 3rem rgba(0, 0, 0, 0.2);
+            background: #a5bbdd;
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+            min-width: 20rem;
+            min-height: 35rem;
+        }
+
+        .wave {
+            opacity: 0.3;
+            position: absolute;
+            top: 120%;
+            left: 50%;
+            background-color: white;
+            width: 50rem;
+            height: 45rem;
+            margin-top: -25rem;
+            margin-left: -25rem;
+            transform-origin: 50% 48%;
+            border-radius: 43%;
+            animation: drift 3000ms infinite linear;
+            z-index: 1;
+        }
+
+        .wave .-three {
+            opacity: 0.2;
+            animation: drift 5000ms infinite linear;
+            z-index: 2 !important;
+        }
+
+        .wave .-two {
+            opacity: 0.1;
+            animation: drift 7000ms infinite linear;
+            z-index: 1 !important;
+        }
+
+        .box::after {
+            content: "";
+            display: block;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            transform: translate3d(0, 0, 0);
+            z-index: 11;
+        }
+
+        @keyframes drift {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .info {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 45%;
+            z-index: 4;
+        }
+
+        .location {
+            margin-top: 1.5rem;
+            font-size: 3rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .fa-street-view {
+            animation: rotates 3s linear infinite alternate;
+        }
+
+        @keyframes rotates {
+            from {
+                transform: translateX(-0.5rem);
+            }
+
+            to {
+                transform: translateX(0.5rem);
+            }
+        }
+
+        #date {
+            margin-top: 0.5rem;
+            text-align: center;
+            color: #57606f;
+            font-size: 1.2rem;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        .temp {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 3rem;
+        }
+
+        .tempmin_max {
+            margin-top: 0.3rem;
+            text-align: center;
+            color: #57606f;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        #weathericon {
+            height: 55%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+        }
+
+        #weathericon .fas {
+            font-size: 6rem;
+            animation: fas-anime 3s linear infinite alternate;
+        }
+
+        @keyframes fas-anime {
+            from {
+                transform: scale(0.8);
+            }
+
+            to {
+                transform: scale(1.2);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .box {
+                width: 90vw;
+                height: 80vh;
+            }
+
+            .wave {
+                top: 85%;
+            }
+
+            #weathericon {
+                font-size: 5em;
+            }
+
+            .info {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <title>WeatherAPP - Node JS</title>
+</head>
+
+<body>
+    <div class="box">
+        <div class="wave -one"></div>
+        <div class="wave -two"></div>
+        <div class="wave -three"></div>
+        <div id="weathericon"><i class="fas fa-sun" style="color: #eccc68;"></i></div>
+        <div class="info">
+            <div class="location"><i class="fas fa-street-view"></i> {%city%}, {%country%}</div>
+            <p id="date">WEB | OCT 3 | 10:98AM</p>
+            <!-- 26.98<sup>o</sup>C -->
+            <h1 class="temp">{%tempVal%}&deg;C</h1>
+            <h3 class="tempmin_max">Min {%tempmin%}&deg;C | Max {%tempmax%}&deg;C</h3>
+        </div>
+    </div>
+
+    <script>
+        const curDate = document.getElementById('date');
+        let weathericon = document.getElementById('weathericon');
+        let tempStatus = "{%tempStatus%}";
+
+        if (tempStatus == 'Sunny') {
+            weathericon.innerHTML = "<i class='fas fa-sun' style='color: #eccc68;'></i>"
+        } else if (tempStatus == 'Clouds') {
+            weathericon.innerHTML = "<i class='fas fa-cloud' style='color: #dfe4ea;'></i>"
+        } else if (tempStatus == 'Rainy') {
+            weathericon.innerHTML = "<i class='fas fa-cloud-rain' style='color: #a4b0be;'></i>"
+        } else {
+            weathericon.innerHTML = "<i class='fas fa-cloud' style='color: #dfe4ea;'></i>"
+        }
+
+        const getCurrentDay = () => {
+            let weekDay = new Array(7);
+            weekDay[0] = "Sun"
+            weekDay[1] = "Mon"
+            weekDay[2] = "Tues"
+            weekDay[3] = "Wed"
+            weekDay[4] = "Thur"
+            weekDay[5] = "Fri"
+            weekDay[6] = "Sat"
+
+            let currentDay = new Date();
+            let day = weekDay[currentDay.getDay()];
+            return day;
+        }
+
+        const getCurrentTime = () => {
+            let months = [
+                'Jan',
+                'Feb',
+                'March',
+                'April',
+                'May',
+                'Jun',
+                'July',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ]
+
+            let currentTime = new Date();
+            let month = months[currentTime.getMonth()];
+            let date = currentTime.getDate();
+            let hours = currentTime.getHours();
+            let mins = currentTime.getMinutes();
+            let periods = "AM"
+            if (hours > 11) {
+                periods = "PM"
+                if (hours > 12) hours -= 12;
+            }
+            if (mins < 10) {
+                mins = "0" + mins
+            }
+            return `${month} ${date} | ${hours}:${mins}${periods}`
+        }
+        curDate.innerHTML = `${getCurrentDay()} | ${getCurrentTime()}`
+
+    </script>
+</body>
+
+</html>
